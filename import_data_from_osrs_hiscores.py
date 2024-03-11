@@ -2,6 +2,8 @@ import requests
 import sqlite3
 import ast
 import re
+import os
+import psycopg2
 from datetime import datetime
 
 SKILLS = [
@@ -46,7 +48,8 @@ def fetch_player_data(player_name):
 
 
 def setup_database():
-    conn = sqlite3.connect('runescape.db')
+    #DATABASE_URL = "STORE INTO ENV VARIABLE MATE"
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
     
     # Create a table for player skills
@@ -99,7 +102,8 @@ def parse_and_save_player_data(player_name, data):
     # Split the data into lines
     lines = data.strip().split("\n")
     
-    conn = sqlite3.connect('runescape.db')
+    #DATABASE_URL = "STORE INTO ENV VARIABLE MATE"
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
     # Put a dict to store combined scores
     combined_raids = {}
@@ -113,7 +117,7 @@ def parse_and_save_player_data(player_name, data):
             skill = SKILLS[i]
             cursor.execute('''
                 INSERT INTO player_skills (player_name, skill, rank, level, experience) 
-                VALUES (?, ?, ?, ?, ?) 
+                VALUES (%s, %s, %s, %s, %s) 
                 ON CONFLICT(player_name, skill) DO UPDATE SET
                 rank = excluded.rank, level = excluded.level, experience = excluded.experience;
             ''', (player_name, skill, rank, level, experience))
@@ -121,12 +125,12 @@ def parse_and_save_player_data(player_name, data):
             if skill == "Overall":
                 overall_experience = int(experience)
 
-    #commenting out to prevent spam
-    #if overall_experience is not None:
-        #cursor.execute('''
-            #INSERT INTO player_overall_experience (player_name, overall_experience, timestamp) 
-            #VALUES (?, ?, CURRENT_TIMESTAMP)
-        #''', (player_name, overall_experience))
+   # Add overall xp history data
+    if overall_experience is not None:
+        cursor.execute('''
+            INSERT INTO player_overall_experience (player_name, overall_experience, timestamp) 
+            VALUES (%s, %s, CURRENT_TIMESTAMP)
+        ''', (player_name, overall_experience))
 
     # the remaining lines are minigames
     for i, line in enumerate(lines[24:], start=24):
@@ -140,7 +144,7 @@ def parse_and_save_player_data(player_name, data):
 
                 cursor.execute('''
                     INSERT INTO player_minigames (player_name, minigame, rank, score) 
-                    VALUES (?, ?, ?, ?)
+                    VALUES (%s, %s, %s, %s)
                     ON CONFLICT(player_name, minigame) DO UPDATE SET
                     rank = excluded.rank, score = excluded.score;
                 ''', (player_name, minigame, rank, score))
@@ -171,7 +175,7 @@ def parse_and_save_player_data(player_name, data):
     total_bosses = sum(combined_bosses.values()) if combined_bosses else 0
     cursor.execute('''
         INSERT INTO player_overall_pvm (player_name, overall_raids, overall_bosses, timestamp) 
-        VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+        VALUES (%s, %s, %s ,CURRENT_TIMESTAMP)
     ''', (player_name, total_raids, total_bosses))
 
     conn.commit()
@@ -189,6 +193,6 @@ def main(player_names):
             print(f"Failed to fetch or save data for player {player_name}.")
 
 if __name__ == "__main__":
-    player_names = ["nodle boy", "Main Scaper", "Gael L"] # Add all the fashion guildies here
+    player_names = ["nodle boy", "Main Scaper", "Gael L", "Dre1", "EavesBeBaked", "Dub Tbow", "Hoarseness", "ArtiMeyer", "Pure Tristan", "solo_glow"] # Add all the fashion guildies here
     main(player_names)
 
