@@ -48,7 +48,7 @@ def fetch_player_data(player_name):
 
 
 def setup_database():
-    #DATABASE_URL = "STORE INTO ENV VARIABLE MATE"
+    DATABASE_URL = os.environ.get('DATABASE_URL')
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
     
@@ -102,7 +102,7 @@ def parse_and_save_player_data(player_name, data):
     # Split the data into lines
     lines = data.strip().split("\n")
     
-    #DATABASE_URL = "STORE INTO ENV VARIABLE MATE"
+    DATABASE_URL = os.environ.get('DATABASE_URL')
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
     # Put a dict to store combined scores
