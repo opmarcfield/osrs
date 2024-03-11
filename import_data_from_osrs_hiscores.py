@@ -63,12 +63,11 @@ def setup_database():
     
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS player_daily_stats (
-            id INTEGER PRIMARY KEY,
             player_name TEXT NOT NULL,
             date DATE NOT NULL,
             skill TEXT NOT NULL,
             experience INTEGER,
-            UNIQUE(player_name, date, skill)
+            PRIMARY KEY (player_name, date, skill)
         )
     ''')
     
@@ -81,6 +80,16 @@ def setup_database():
             rank INTEGER,
             score INTEGER,
             PRIMARY KEY (player_name, minigame)
+        )
+    ''')
+
+    # Create a table for overall experience
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS player_overall_experience (
+            player_name TEXT,
+            overall_experience INTEGER,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (player_name, timestamp)
         )
     ''')
 
@@ -106,7 +115,18 @@ def parse_and_save_player_data(player_name, data):
                 ON CONFLICT(player_name, skill) DO UPDATE SET
                 rank = excluded.rank, level = excluded.level, experience = excluded.experience;
             ''', (player_name, skill, rank, level, experience))
+            #insert_daily_stats(player_name, skill, experience)
+            # Store the overall experience if the skill is "Overall"
+            if skill == "Overall":
+                overall_experience = int(experience)
+
     
+    if overall_experience is not None:
+        cursor.execute('''
+            INSERT INTO player_overall_experience (player_name, overall_experience, timestamp) 
+            VALUES (?, ?, CURRENT_TIMESTAMP)
+        ''', (player_name, overall_experience))
+
     # Assuming the remaining lines are minigames
     for i, line in enumerate(lines[24:], start=24):
         parts = line.split(',')
@@ -129,13 +149,17 @@ def parse_and_save_player_data(player_name, data):
 def insert_daily_stats(player_name, skill, experience):
     conn = sqlite3.connect('runescape.db')
     cursor = conn.cursor()
-    date_today = datetime.now().date()  # Get the current date
-    cursor.execute('''
-        INSERT OR IGNORE INTO player_daily_stats (player_name, date, skill, experience) 
-        VALUES (?, ?, ?, ?)
-    ''', (player_name, date_today, skill, experience))
-    conn.commit()
-    conn.close()
+    date_today = datetime.now().date().isoformat()
+    try:
+        cursor.execute('''
+            INSERT OR IGNORE INTO player_daily_stats (player_name, date, skill, experience) 
+            VALUES (?, ?, ?, ?)
+        ''', (player_name, date_today, skill, experience))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        print("Duplicate entry detected. Skipping insertion.")
+    finally:
+        conn.close()
     
 def main(player_names):
     setup_database()

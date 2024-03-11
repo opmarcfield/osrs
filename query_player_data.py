@@ -1,5 +1,6 @@
 import sqlite3
-        
+import requests
+
 def fetch_skill_data_for_player(player_name):
     conn = sqlite3.connect('runescape.db')
     cursor = conn.cursor()
@@ -40,7 +41,20 @@ def fetch_minigame_data_for_player(player_name):
     else:
         print(f"No minigame data found for {player_name}.")
         
-#query_player_data("nodle boy")
 player_name = "nodle boy"
 #fetch_skill_data_for_player(player_name)
-fetch_minigame_data_for_player(player_name)
+#fetch_minigame_data_for_player(player_name)
+
+def fetch_player_data(player_name):
+    url = f"https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player={player_name}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        raw_data = response.text
+        print(f"Raw data for player {player_name}:")
+        print(raw_data)
+        return raw_data
+    else:
+        print(f"Error fetching data for player: {player_name}")
+        return None
+    
+fetch_player_data(player_name)
