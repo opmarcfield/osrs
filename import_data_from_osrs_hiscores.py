@@ -60,17 +60,6 @@ def setup_database():
             PRIMARY KEY (player_name, skill)
         )
     ''')
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS player_daily_stats (
-            player_name TEXT NOT NULL,
-            date DATE NOT NULL,
-            skill TEXT NOT NULL,
-            experience INTEGER,
-            PRIMARY KEY (player_name, date, skill)
-        )
-    ''')
-    
 
     # Create a table for player minigame scores
     cursor.execute('''
@@ -93,6 +82,16 @@ def setup_database():
         )
     ''')
 
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS player_overall_pvm (
+            player_name TEXT,
+            overall_raids INTEGER,
+            overall_bosses INTEGER,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (player_name, timestamp)
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
@@ -102,9 +101,12 @@ def parse_and_save_player_data(player_name, data):
     
     conn = sqlite3.connect('runescape.db')
     cursor = conn.cursor()
+    # Put a dict to store combined scores
+    combined_raids = {}
+    combined_bosses = {}
     
     # Process skills
-    for i, line in enumerate(lines[:24]):  # Assuming the first 24 lines are skills
+    for i, line in enumerate(lines[:24]):  # first 24 lines are skills
         parts = line.split(',')
         if len(parts) >= 3:
             rank, level, experience = parts[:3]
@@ -115,19 +117,18 @@ def parse_and_save_player_data(player_name, data):
                 ON CONFLICT(player_name, skill) DO UPDATE SET
                 rank = excluded.rank, level = excluded.level, experience = excluded.experience;
             ''', (player_name, skill, rank, level, experience))
-            #insert_daily_stats(player_name, skill, experience)
             # Store the overall experience if the skill is "Overall"
             if skill == "Overall":
                 overall_experience = int(experience)
 
-    
-    if overall_experience is not None:
-        cursor.execute('''
-            INSERT INTO player_overall_experience (player_name, overall_experience, timestamp) 
-            VALUES (?, ?, CURRENT_TIMESTAMP)
-        ''', (player_name, overall_experience))
+    #commenting out to prevent spam
+    #if overall_experience is not None:
+        #cursor.execute('''
+            #INSERT INTO player_overall_experience (player_name, overall_experience, timestamp) 
+            #VALUES (?, ?, CURRENT_TIMESTAMP)
+        #''', (player_name, overall_experience))
 
-    # Assuming the remaining lines are minigames
+    # the remaining lines are minigames
     for i, line in enumerate(lines[24:], start=24):
         parts = line.split(',')
         if len(parts) >= 2:
@@ -136,43 +137,58 @@ def parse_and_save_player_data(player_name, data):
             minigame_index = i - 24  # Adjusting for the 24 skills entries before the minigames
             if minigame_index < len(MINIGAMES):
                 minigame = MINIGAMES[minigame_index]
+
                 cursor.execute('''
                     INSERT INTO player_minigames (player_name, minigame, rank, score) 
                     VALUES (?, ?, ?, ?)
                     ON CONFLICT(player_name, minigame) DO UPDATE SET
                     rank = excluded.rank, score = excluded.score;
                 ''', (player_name, minigame, rank, score))
+                if minigame in ["Chambers of Xeric", "Chambers of Xeric: Challenge Mode", "Theatre of Blood", 
+                                        "Theatre of Blood: Hard Mode", "Tombs of Amascut", "Tombs of Amascut: Expert Mode"]:
+                    if minigame not in combined_raids:
+                        combined_raids[minigame] = 0
+                    combined_raids[minigame] += int(score)
+                elif minigame in ["Abyssal Sire", "Alchemical Hydra", "Artio", "Barrows", "Bryophyta", 
+                                    "Callisto", "Calvarion", "Cerberus", "Chaos Elemental", "Chaos Fanatic", 
+                                    "Commander Zilyana", "Corporeal Beast", "Crazy Archaeologist", 
+                                    "Dagannoth Prime", "Dagannoth Rex", "Dagannoth Supreme", 
+                                    "Deranged Archaeologist", "Duke Sucellus", "General Graardor", 
+                                    "Giant Mole", "Grotesque Guardians", "Hespori", "Kalphite Queen", 
+                                    "King Black Dragon", "Kraken", "Kree'Arra", "K'ril Tsutsaroth", 
+                                    "Mimic", "Nex", "Nightmare", "Phosani's Nightmare", "Obor", 
+                                    "Phantom Muspah", "Sarachnis", "Scorpia", "Scurrius", "Skotizo", 
+                                    "Spindel", "Tempoross", "The Gauntlet", "The Corrupted Gauntlet", 
+                                    "The Leviathan", "The Whisperer", "Thermonuclear Smoke Devil", 
+                                    "TzKal-Zuk", "TzTok-Jad", "Vardorvis", "Venenatis", "Vet'ion", "Vorkath", 
+                                    "Wintertodt", "Zalcano", "Zulrah"]:
+                    if minigame not in combined_bosses:
+                        combined_bosses[minigame] = 0
+                    combined_bosses[minigame] += int(score)
+    
+    
+    total_raids = sum(combined_raids.values()) if combined_raids else 0
+    total_bosses = sum(combined_bosses.values()) if combined_bosses else 0
+    cursor.execute('''
+        INSERT INTO player_overall_pvm (player_name, overall_raids, overall_bosses, timestamp) 
+        VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+    ''', (player_name, total_raids, total_bosses))
 
     conn.commit()
     conn.close()
-    
-def insert_daily_stats(player_name, skill, experience):
-    conn = sqlite3.connect('runescape.db')
-    cursor = conn.cursor()
-    date_today = datetime.now().date().isoformat()
-    try:
-        cursor.execute('''
-            INSERT OR IGNORE INTO player_daily_stats (player_name, date, skill, experience) 
-            VALUES (?, ?, ?, ?)
-        ''', (player_name, date_today, skill, experience))
-        conn.commit()
-    except sqlite3.IntegrityError:
-        print("Duplicate entry detected. Skipping insertion.")
-    finally:
-        conn.close()
     
 def main(player_names):
     setup_database()
     for player_name in player_names:
         raw_data = fetch_player_data(player_name)
         if raw_data:
-            # Directly parse and save data; this function now handles both operations
+            # Directly parse and save data
             parse_and_save_player_data(player_name, raw_data)
             print(f"Data for player {player_name} saved successfully.")
         else:
             print(f"Failed to fetch or save data for player {player_name}.")
 
 if __name__ == "__main__":
-    player_names = ["nodle boy", "Main Scaper", "Gael L"] # Add more player names as needed
+    player_names = ["nodle boy", "Main Scaper", "Gael L"] # Add all the fashion guildies here
     main(player_names)
 
