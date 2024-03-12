@@ -1,4 +1,2 @@
 # osrs
-stuff for guild for fun
-
-THINGS HEATING UP
+This repo only hosts the python import script that loads the guildies data from the official hiscores with the osrs API, and then inserts that data into the postgreSQL free database. Heroku is hosting the postgreSQL, and heroku app is connected to this repo directly so it can run the import script. Will enable automatic deployments later once everything is stablizied.
