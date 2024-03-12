@@ -36,7 +36,12 @@ SELECT
     end_experience,
     experience_gain
 FROM
-    StartEndExperience;
+    StartEndExperience
+ON CONFLICT (player_name, week_start)
+DO UPDATE SET
+    start_experience = EXCLUDED.start_experience,
+    end_experience = EXCLUDED.end_experience,
+    experience_gain = EXCLUDED.experience_gain;
 
 """
 
@@ -79,7 +84,15 @@ SELECT DISTINCT
     bosses_end,
     bosses_increase
 FROM
-    StartEndPvM;
+    StartEndPvM
+ON CONFLICT (player_name, week_start_date)
+DO UPDATE SET
+    raids_start = EXCLUDED.raids_start,
+    raids_end = EXCLUDED.raids_end,
+    raids_increase = EXCLUDED.raids_increase,
+    bosses_start = EXCLUDED.bosses_start,
+    bosses_end = EXCLUDED.bosses_end,
+    bosses_increase = EXCLUDED.bosses_increase;
 """
 
 def run_sql_command(conn, sql_command):
