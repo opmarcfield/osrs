@@ -193,6 +193,7 @@ def main(player_names):
             print(f"Failed to fetch or save data for player {player_name}.")
 
 if __name__ == "__main__":
-    player_names = ["nodle boy", "Main Scaper", "Gael L", "Dre1", "EavesBeBaked", "Dub Tbow", "Hoarseness", "ArtiMeyer", "Pure Tristan", "solo_glow"] # Add all the fashion guildies here
+    # Add all the fashion guildies here, later this can be done in a better way but cba now
+    player_names = ["nodle boy", "Main Scaper", "Gael L", "Dre1", "EavesBeBaked", "Dub Tbow", "Hoarseness", "ArtiMeyer", "Pure Tristan", "solo_glow"] 
     main(player_names)
 
