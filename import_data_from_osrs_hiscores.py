@@ -194,6 +194,6 @@ def main(player_names):
 
 if __name__ == "__main__":
     # Add all the fashion guildies here, later this can be done in a better way but cba now
-    player_names = ["nodle boy", "Main Scaper", "Gael L", "Dre1", "GetPurpz", "Dub Tbow", "Hoarseness", "ArtiMeyer", "Pure Tristan", "solo_glow", "interwebfrog", "W0nderbrad", "rocketdoggy", "daddy thor", "daddyy thor", "Logannen", "peajib", "SquatJogsBro", "Se rena", "Sunneh", "X Skimo", "LurpakShakur", "BrutaIX", "0nlySpoonz", "ThePatman", "Kasmacku"] 
+    player_names = ["nodle boy", "Main Scaper", "Gael L", "Dre1", "GetPurpz", "Dub Tbow", "Hoarseness", "ArtiMeyer", "Pure Tristan", "solo_glow", "interwebfrog", "W0nderbrad", "rocketdoggy", "daddy thor", "daddyy thor", "Logannen", "peajib", "SquatJogsBro", "Se rena", "Sunneh", "X Skimo", "LurpakShakur", "BrutaIX", "0nlySpoonz", "ThePatman", "Kasmacku", "8llu"] 
     main(player_names)
 
