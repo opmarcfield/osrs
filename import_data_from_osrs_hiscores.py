@@ -28,7 +28,7 @@ MINIGAMES = [
     "King Black Dragon", "Kraken", "Kree'Arra", "K'ril Tsutsaroth", "Lunar Chests",
     "Mimic", "Nex", "Nightmare", "Phosani's Nightmare", "Obor", 
     "Phantom Muspah", "Sarachnis", "Scorpia", "Scurrius", "Skotizo", "Sol Heredit", 
-    "Spindel", "Tempoross", "The Gauntlet", "The Corrupted Gauntlet", 
+    "Spindel", "Tempoross", "The Gauntlet", "The Corrupted Gauntlet", "The Hueycoatl", 
     "The Leviathan", "The Whisperer", "Theatre of Blood", 
     "Theatre of Blood: Hard Mode", "Thermonuclear Smoke Devil", 
     "Tombs of Amascut", "Tombs of Amascut: Expert Mode", "TzKal-Zuk", 
@@ -162,7 +162,7 @@ def parse_and_save_player_data(player_name, data):
                                     "King Black Dragon", "Kraken", "Kree'Arra", "K'ril Tsutsaroth", "Lunar Chests",
                                     "Mimic", "Nex", "Nightmare", "Phosani's Nightmare", "Obor", 
                                     "Phantom Muspah", "Sarachnis", "Scorpia", "Scurrius", "Skotizo", "Sol Heredit", 
-                                    "Spindel", "Tempoross", "The Gauntlet", "The Corrupted Gauntlet", 
+                                    "Spindel", "Tempoross", "The Gauntlet", "The Corrupted Gauntlet", "The Hueycoatl",
                                     "The Leviathan", "The Whisperer", "Thermonuclear Smoke Devil", 
                                     "TzKal-Zuk", "TzTok-Jad", "Vardorvis", "Venenatis", "Vet'ion", "Vorkath", 
                                     "Wintertodt", "Zalcano", "Zulrah"]:
