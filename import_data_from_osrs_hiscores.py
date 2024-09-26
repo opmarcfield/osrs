@@ -18,7 +18,7 @@ MINIGAMES = [
     "BH1","BH2","BH3","BH4","BH5","BH6","Clue Scrolls (all)", "Clue Scrolls (beginner)", "Clue Scrolls (easy)", 
     "Clue Scrolls (medium)", "Clue Scrolls (hard)", "Clue Scrolls (elite)", 
     "Clue Scrolls (master)", "LMS - Rank", "PVPARENA", "Soul Wars Zeal", "Rifts closed", "Colosseum Glory",
-    "Abyssal Sire", "Alchemical Hydra", "Araxxor", "Artio", "Barrows", "Bryophyta", 
+    "Abyssal Sire", "Alchemical Hydra", "Amoxliatl", "Araxxor", "Artio", "Barrows", "Bryophyta", 
     "Callisto", "Calvarion", "Cerberus", "Chambers of Xeric", 
     "Chambers of Xeric: Challenge Mode", "Chaos Elemental", "Chaos Fanatic", 
     "Commander Zilyana", "Corporeal Beast", "Crazy Archaeologist", 
@@ -153,7 +153,7 @@ def parse_and_save_player_data(player_name, data):
                     if minigame not in combined_raids:
                         combined_raids[minigame] = 0
                     combined_raids[minigame] += int(score)
-                elif minigame in ["Abyssal Sire", "Alchemical Hydra", "Araxxor", "Artio", "Barrows", "Bryophyta", 
+                elif minigame in ["Abyssal Sire", "Alchemical Hydra", "Amoxliatl", "Araxxor", "Artio", "Barrows", "Bryophyta", 
                                     "Callisto", "Calvarion", "Cerberus", "Chaos Elemental", "Chaos Fanatic", 
                                     "Commander Zilyana", "Corporeal Beast", "Crazy Archaeologist", 
                                     "Dagannoth Prime", "Dagannoth Rex", "Dagannoth Supreme", 
@@ -194,6 +194,6 @@ def main(player_names):
 
 if __name__ == "__main__":
     # Add all the fashion guildies here, later this can be done in a better way but cba now
-    player_names = ["nodle boy", "Main Scaper", "Gael L", "Dre1", "GetPurpz", "Dub Tbow", "Hoarseness", "ArtiMeyer", "Pure Tristan", "solo_glow", "interwebfrog", "W0nderbrad", "rocketdoggy", "daddy thor", "daddyy thor", "Logannen", "peajib", "SquatJogsBro", "Se rena", "Sunneh", "X Skimo", "LurpakShakur", "BrutaIX", "0nlySpoonz", "ThePatman", "Kasmacku", "8llu"] 
+    player_names = ["nodle boy", "Main Scaper", "Learner Gael", "Dre1", "GetPurpz", "Dub Tbow", "Hoarseness", "ArtiMeyer", "Pure Tristan", "solo_glow", "interwebfrog", "W0nderbrad", "rocketdoggy", "daddy thor", "daddyy thor", "Logannen", "peajib", "SquatJogsBro", "Se rena", "Sunneh", "X Skimo", "LurpakShakur", "BrutaIX", "0nlySpoonz", "ThePatman", "Kasmacku", "8llu"] 
     main(player_names)
 
