@@ -17,7 +17,7 @@ SKILLS = [
 MINIGAMES = [
     "BH1","BH2","BH3","BH4","BH5","BH6","Clue Scrolls (all)", "Clue Scrolls (beginner)", "Clue Scrolls (easy)", 
     "Clue Scrolls (medium)", "Clue Scrolls (hard)", "Clue Scrolls (elite)", 
-    "Clue Scrolls (master)", "LMS - Rank", "PVPARENA", "Soul Wars Zeal", "Rifts closed", "Colosseum Glory",
+    "Clue Scrolls (master)", "LMS - Rank", "PVPARENA", "Soul Wars Zeal", "Rifts closed", "Colosseum Glory","Collections Logged",
     "Abyssal Sire", "Alchemical Hydra", "Amoxliatl", "Araxxor", "Artio", "Barrows", "Bryophyta", 
     "Callisto", "Calvarion", "Cerberus", "Chambers of Xeric", 
     "Chambers of Xeric: Challenge Mode", "Chaos Elemental", "Chaos Fanatic", 
@@ -163,7 +163,7 @@ def parse_and_save_player_data(player_name, data):
                                     "Mimic", "Nex", "Nightmare", "Phosani's Nightmare", "Obor", 
                                     "Phantom Muspah", "Sarachnis", "Scorpia", "Scurrius", "Skotizo", "Sol Heredit", 
                                     "Spindel", "Tempoross", "The Gauntlet", "The Corrupted Gauntlet", "The Hueycoatl",
-                                    "The Leviathan", "The Whisperer", "Thermonuclear Smoke Devil", 
+                                    "The Leviathan", "The Royal Titans", "The Whisperer", "Thermonuclear Smoke Devil", 
                                     "TzKal-Zuk", "TzTok-Jad", "Vardorvis", "Venenatis", "Vet'ion", "Vorkath", 
                                     "Wintertodt", "Zalcano", "Zulrah"]:
                     if minigame not in combined_bosses:
