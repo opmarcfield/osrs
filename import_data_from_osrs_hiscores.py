@@ -33,7 +33,7 @@ MINIGAMES = [
     "Theatre of Blood: Hard Mode", "Thermonuclear Smoke Devil", 
     "Tombs of Amascut", "Tombs of Amascut: Expert Mode", "TzKal-Zuk", 
     "TzTok-Jad", "Vardorvis", "Venenatis", "Vet'ion", "Vorkath", 
-    "Wintertodt", "Zalcano", "Zulrah"
+    "Wintertodt", "Yama", "Zalcano", "Zulrah"
 ]
 
 
@@ -165,7 +165,7 @@ def parse_and_save_player_data(player_name, data):
                                     "Spindel", "Tempoross", "The Gauntlet", "The Corrupted Gauntlet", "The Hueycoatl",
                                     "The Leviathan", "The Royal Titans", "The Whisperer", "Thermonuclear Smoke Devil", 
                                     "TzKal-Zuk", "TzTok-Jad", "Vardorvis", "Venenatis", "Vet'ion", "Vorkath", 
-                                    "Wintertodt", "Zalcano", "Zulrah"]:
+                                    "Wintertodt", "Yama", "Zalcano", "Zulrah"]:
                     if minigame not in combined_bosses:
                         combined_bosses[minigame] = 0
                     combined_bosses[minigame] += int(score)
