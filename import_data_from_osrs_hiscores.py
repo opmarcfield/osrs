@@ -23,7 +23,7 @@ MINIGAMES = [
     "Chambers of Xeric: Challenge Mode", "Chaos Elemental", "Chaos Fanatic", 
     "Commander Zilyana", "Corporeal Beast", "Crazy Archaeologist", 
     "Dagannoth Prime", "Dagannoth Rex", "Dagannoth Supreme", 
-    "Deranged Archaeologist", "Duke Sucellus", "General Graardor", 
+    "Deranged Archaeologist", "Doom of Mokhaiotl", "Duke Sucellus", "General Graardor", 
     "Giant Mole", "Grotesque Guardians", "Hespori", "Kalphite Queen", 
     "King Black Dragon", "Kraken", "Kree'Arra", "K'ril Tsutsaroth", "Lunar Chests",
     "Mimic", "Nex", "Nightmare", "Phosani's Nightmare", "Obor", 
