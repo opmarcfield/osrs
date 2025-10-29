@@ -5,6 +5,13 @@ import re
 import os
 import psycopg2
 from datetime import datetime
+from urllib.parse import quote
+
+# CONFIG
+WISE_OLD_MAN_GROUP_ID = int(os.getenv("WOM_GROUP_ID", "10348"))
+WOM_BASE = "https://api.wiseoldman.net/v2"
+HISCORES_URL = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player={}"
+# ----------------------------
 
 SKILLS = [
     "Overall", "Attack", "Defence", "Strength", "Hitpoints", "Ranged", 
@@ -36,14 +43,37 @@ MINIGAMES = [
     "Wintertodt", "Yama", "Zalcano", "Zulrah"
 ]
 
+def fetch_wom_group_members(group_id: int, timeout=10):
+    """
+    Pull live member list from Wise Old Man.
+    Uses displayName when present (reflects name changes), else username.
+    Returns a de-duplicated list preserving order.
+    """
+    url = f"{WOM_BASE}/groups/{group_id}"
+    r = requests.get(url, timeout=timeout)
+    r.raise_for_status()
+    data = r.json()
+    names = []
+    seen = set()
+    for m in data.get("memberships", []):
+        player = m.get("player") or {}
+        name = (player.get("displayName") or player.get("username") or "").strip()
+        if not name:
+            continue
+        key = name.lower()
+        if key not in seen:
+            seen.add(key)
+            names.append(name)
+    return names
 
 def fetch_player_data(player_name):
-    url = f"https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player={player_name}"
-    response = requests.get(url)
+    # URL-encode the player name for the hiscores endpoint
+    url = HISCORES_URL.format(quote(player_name, safe=""))
+    response = requests.get(url, timeout=10)
     if response.status_code == 200:
         return response.text
     else:
-        print(f"Error fetching data for player: {player_name}")
+        print(f"Error fetching data for player: {player_name} (HTTP {response.status_code})")
         return None
 
 
@@ -181,19 +211,26 @@ def parse_and_save_player_data(player_name, data):
     conn.commit()
     conn.close()
     
-def main(player_names):
+def main(player_names=None):
     setup_database()
+
+    # If no explicit list provided, fetch live from Wise Old Man
+    if player_names is None:
+        try:
+            player_names = fetch_wom_group_members(WISE_OLD_MAN_GROUP_ID)
+            print(f"Fetched {len(player_names)} members from WOM group {WISE_OLD_MAN_GROUP_ID}.")
+        except Exception as e:
+            print(f"Failed to fetch WOM members: {e}")
+            player_names = []
+
     for player_name in player_names:
         raw_data = fetch_player_data(player_name)
         if raw_data:
-            # Directly parse and save data
             parse_and_save_player_data(player_name, raw_data)
-            print(f"Data for player {player_name} saved successfully.")
+            print(f"Saved data for {player_name}.")
         else:
-            print(f"Failed to fetch or save data for player {player_name}.")
+            print(f"Failed to fetch or save data for {player_name}.")
 
 if __name__ == "__main__":
-    # Add all the fashion guildies here, later this can be done in a better way but cba now
-    player_names = ["nodle boy", "Main Scaper", "Learner Gael", "Dre1", "GetPurpz", "Dub Tbow", "Hoarseness", "ArtiMeyer", "Pure Tristan", "solo_glow", "interwebfrog", "W0nderbrad", "rocketdoggy", "daddy thor", "daddyy thor", "Logannen", "peajib", "SquatJogsBro", "Se rena", "Sunneh", "X Skimo", "LurpakShakur", "BrutaIX", "0nlySpoonz", "ThePatman", "Kasmacku", "8llu"] 
-    main(player_names)
-
+    # No hard-coded names needed—pull from WOM by default
+    main()  # or main(["some override list"]) if you ever need to
